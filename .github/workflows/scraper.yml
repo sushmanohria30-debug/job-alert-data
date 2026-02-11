@@ -1,0 +1,26 @@
+name: Auto Job Scraper
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Fetch job data
+        run: |
+          curl -L https://gov-job-alert.replit.app/api/jobs -o jobs.json
+
+      - name: Commit updated jobs
+        run: |
+          git config --global user.name "job-bot"
+          git config --global user.email "bot@github.com"
+          git add jobs.json
+          git commit -m "Auto update jobs"
+          git push
